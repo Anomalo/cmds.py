@@ -5,6 +5,47 @@ import glob
 import __main__ as main
 
 
+def sep_blocks(txt):
+        #separates the blocks
+        return txt.split('\x23\x23')
+def parse_block(txt):
+        txt = txt.replace('\t','')
+        cmds = txt.splitlines()
+        print txt
+        title = cmds.pop(0)
+        CMDS = []
+        #gets rid of comments
+        for cmd in cmds:
+                CMD = cmd.split('\x23')[0]
+                CMDS.append(CMD)
+        cmd = ' '.join(CMDS)
+        return (title,cmd)
+def parse_blocks(commands):
+        out = []
+        for c in commands:
+                if not c == '':
+                        out.append(parse_block(c))
+        return out
+
+def _read(f):
+        #reads the file and returns a list of parsed commands
+        f = open(f,'r')
+        txt = f.read()
+        commands = parse_blocks(sep_blocks(txt))
+        return commands
+def print_commands(commands):
+        os.system('clear')
+        CSI="\x1B["
+        reset=CSI+"m"
+        for entry in commands:
+                title, cmd = entry
+                print CSI+"31;40m" + title+ CSI + "0m",'\n',cmd,'\n\n'
+
+
+def show(f):
+        commands = _read(f)
+        print_commands(commands)
+
 def read(f):
         #reads the file and returns a list of parsed commands
         f = open(f,'r')
@@ -27,7 +68,7 @@ def read(f):
                 CMDS.remove('')
         return(CMDS)
 
-
+'''
 def show(f):
         #prints the commands in the file
         n=1
@@ -35,6 +76,7 @@ def show(f):
 
                 print n,')\n', line,'\n'*2
                 n+=1
+'''
 def run():
         #run the commands in the file
         cmds = read()
@@ -58,4 +100,7 @@ if arg == (main.__file__):
         seeAll()
 else:
         show(arg)
+
+
+
 
